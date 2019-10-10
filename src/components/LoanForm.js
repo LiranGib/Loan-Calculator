@@ -4,9 +4,9 @@ import PaymentsSchedule from './PaymentsSchedule';
 const LoanForm = () => {
 	const [values, setValues] = useState({
 		startDate: '',
-		loan: '',
-		installmentAmount: '',
-		interestRate: '',
+		loan: '10000',
+		installmentAmount: '5',
+		interestRate: '5',
 		installmentInterval: '',
 		payment: '',
 		loanTerm: ''

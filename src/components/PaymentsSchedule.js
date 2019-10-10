@@ -25,29 +25,44 @@ export default function PaymentsSchedule({ values }) {
 	);
 
 	const schedulePayments = () => {
+		let date = startDate.split('-').join(' ');
+		let d = new Date(date);
 		let scheduleArray = [];
+		let seq = 0;
+		let temp;
+
+		const addToArray = d => {
+			temp = d.toISOString().slice(0, 10);
+			scheduleArray.push(temp);
+		};
+
+		const weekendDate = d => {
+			if (d.getDay() === 6) {
+				d = new Date(d.setDate(d.getDate() + 2));
+				addToArray(d);
+			} else if (d.getDay() === 0) {
+				d = new Date(d.setDate(d.getDate() + 1));
+				addToArray(d);
+			} else {
+				addToArray(d);
+			}
+		};
+
 		if (installmentInterval === 'months' || installmentInterval === 'years') {
-			let seq = 0;
 			while (loanTerm > seq) {
-				const date = startDate.split('-').join(' ');
-				const d = new Date(date);
-				const newDate = new Date(d.setMonth(d.getMonth() + seq));
-				const paymentDate = newDate.toISOString().slice(0, 10);
-				scheduleArray.push(paymentDate);
+				d = new Date(d.setMonth(d.getMonth() + 1));
+				weekendDate(d);
 				seq++;
 			}
 		}
 		if (installmentInterval === 'days') {
-			let seq = 0;
 			while (loanTerm > seq) {
-				const date = startDate.split('-').join(' ');
-				const d = new Date(date);
-				const newDate = new Date(d.setDate(d.getDate() + seq));
-				const paymentDate = newDate.toISOString().slice(0, 10);
-				scheduleArray.push(paymentDate);
+				d = new Date(d.setDate(d.getDate() + 1));
+				weekendDate(d);
 				seq++;
 			}
 		}
+
 		return (
 			<>
 				<h5 className='m-3 bg-success text-white p-2'>
