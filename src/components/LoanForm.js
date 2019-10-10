@@ -1,41 +1,46 @@
 import React, { useState } from 'react';
-// import { calculatePayments } from '../controllers/loan.controller';
+import PaymentsSchedule from './PaymentsSchedule';
 
 const LoanForm = () => {
 	const [values, setValues] = useState({
-		// startDate: '',
+		startDate: '',
 		loan: '',
 		installmentAmount: '',
 		interestRate: '',
 		installmentInterval: '',
-		payment: ''
+		payment: '',
+		loanTerm: ''
 	});
 
-	const { startDate, loan, installmentAmount, interestRate, installmentInterval, payment } = values;
+	const { startDate, loan, installmentAmount, interestRate, installmentInterval, payment, loanTerm } = values;
 
-	const monthlyPayment = term => {
-		let interest = interestRate / 1200;
-		let monthlyPayment = (loan * interest) / (1 - Math.pow(1 / (1 + interest), term));
-		monthlyPayment = +(Math.round(monthlyPayment + 'e+2') + 'e-2');
+	//Calculating the monthly/daily payment
+	const installmentPayment = (term, interest) => {
+		interest = interest || interestRate / 1200;
+		let paymentAmount = (loan * interest) / (1 - Math.pow(1 / (1 + interest), term));
+		//Round to at most 2 decimal places
+		paymentAmount = +(Math.round(paymentAmount + 'e+2') + 'e-2');
 
 		setValues({
 			...values,
-			payment: monthlyPayment
+			payment: paymentAmount,
+			loanTerm: term
 		});
 	};
 
 	const calculatePayments = () => {
 		if (installmentInterval === 'years') {
 			let term = installmentAmount * 12;
-			monthlyPayment(term);
+			installmentPayment(term);
 		}
 		if (installmentInterval === 'months') {
 			let term = installmentAmount;
-			monthlyPayment(term);
+			installmentPayment(term);
 		}
 		if (installmentInterval === 'days') {
-			let term = (installmentAmount / 365) * 12;
-			monthlyPayment(term);
+			let term = installmentAmount;
+			let interest = interestRate / 36000;
+			installmentPayment(term, interest);
 		}
 	};
 
@@ -51,7 +56,7 @@ const LoanForm = () => {
 
 	const loanForm = () => (
 		<form className='m-3' onSubmit={clickSubmit}>
-			{/* <div className='form-group'>
+			<div className='form-group'>
 				<label className='text-muted'>Start Date</label>
 				<input
 					onChange={handleChange('startDate')}
@@ -60,7 +65,7 @@ const LoanForm = () => {
 					value={startDate}
 					required
 				/>
-			</div> */}
+			</div>
 
 			<div className='form-group'>
 				<label className='text-muted'>Loan Amount ($)</label>
@@ -117,10 +122,11 @@ const LoanForm = () => {
 		<>
 			{loanForm()}
 			{installmentInterval === 'days' ? (
-				<h5 className='m-3'>Daily Payment {payment}</h5>
+				<h5 className='bg-primary text-white m-3 mt-5 p-2'>Daily Payment {payment}</h5>
 			) : (
-				<h5 className='m-3'>Monthly Payment {payment}</h5>
+				<h5 className='bg-primary text-white m-3 mt-5 p-2'>Monthly Payment {payment} </h5>
 			)}
+			<PaymentsSchedule values={values} />
 		</>
 	);
 };
