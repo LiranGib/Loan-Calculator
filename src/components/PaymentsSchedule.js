@@ -1,7 +1,9 @@
 import React from 'react';
+import moment from 'moment';
+import fedHolidays from '@18f/us-federal-holidays';
 
 export default function PaymentsSchedule({ values }) {
-	const { startDate, loan, installmentAmount, interestRate, installmentInterval, payment, loanTerm } = values;
+	const { startDate, installmentInterval, payment, loanTerm } = values;
 
 	const table = scheduleArray => (
 		<table className='table m-3'>
@@ -29,36 +31,50 @@ export default function PaymentsSchedule({ values }) {
 		let d = new Date(date);
 		let scheduleArray = [];
 		let seq = 0;
-		let temp;
+		let formatDate;
 
 		const addToArray = d => {
-			temp = d.toISOString().slice(0, 10);
-			scheduleArray.push(temp);
+			formatDate = moment(d).format('MMM Do YY');
+			scheduleArray.push(formatDate);
 		};
 
 		const weekendDate = d => {
 			if (d.getDay() === 6) {
 				d = new Date(d.setDate(d.getDate() + 2));
-				addToArray(d);
-			} else if (d.getDay() === 0) {
+			}
+			if (d.getDay() === 0) {
 				d = new Date(d.setDate(d.getDate() + 1));
-				addToArray(d);
-			} else {
-				addToArray(d);
+			}
+		};
+
+		const checkHoliday = d => {
+			const options = {
+				shiftSaturdayHolidays: false,
+				shiftSundayHolidays: false,
+				utc: false
+			};
+			if (fedHolidays.isAHoliday(d, options)) {
+				d = new Date(d.setDate(d.getDate() + 1));
 			}
 		};
 
 		if (installmentInterval === 'months' || installmentInterval === 'years') {
+			d = new Date(d.setMonth(d.getMonth() - 1));
 			while (loanTerm > seq) {
 				d = new Date(d.setMonth(d.getMonth() + 1));
+				checkHoliday(d);
 				weekendDate(d);
+				addToArray(d);
 				seq++;
 			}
 		}
 		if (installmentInterval === 'days') {
+			d = new Date(d.setDate(d.getDate() - 1));
 			while (loanTerm > seq) {
 				d = new Date(d.setDate(d.getDate() + 1));
+				checkHoliday(d);
 				weekendDate(d);
+				addToArray(d);
 				seq++;
 			}
 		}

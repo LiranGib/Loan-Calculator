@@ -4,18 +4,19 @@ import PaymentsSchedule from './PaymentsSchedule';
 const LoanForm = () => {
 	const [values, setValues] = useState({
 		startDate: '',
-		loan: '10000',
-		installmentAmount: '5',
-		interestRate: '5',
+		loan: '',
+		installmentAmount: '',
+		interestRate: '',
 		installmentInterval: '',
 		payment: '',
 		loanTerm: ''
 	});
 
-	const { startDate, loan, installmentAmount, interestRate, installmentInterval, payment, loanTerm } = values;
+	const { startDate, loan, installmentAmount, interestRate, installmentInterval, payment } = values;
 
 	//Calculating the monthly/daily payment
 	const installmentPayment = (term, interest) => {
+		// breaking annual interest into monthly interest
 		interest = interest || interestRate / 1200;
 		let paymentAmount = (loan * interest) / (1 - Math.pow(1 / (1 + interest), term));
 		//Round to at most 2 decimal places
@@ -39,6 +40,7 @@ const LoanForm = () => {
 		}
 		if (installmentInterval === 'days') {
 			let term = installmentAmount;
+			// breaking annual interest into daily interest
 			let interest = interestRate / 36000;
 			installmentPayment(term, interest);
 		}
@@ -50,8 +52,14 @@ const LoanForm = () => {
 	};
 
 	const handleChange = name => event => {
-		const value = event.target.value;
-		setValues({ ...values, [name]: value });
+		let today = new Date();
+		let userDate = new Date(event.target.value);
+		if (name === 'startDate' && userDate < today) {
+			window.alert('Date can not be in the past!');
+		} else {
+			const value = event.target.value;
+			setValues({ ...values, [name]: value });
+		}
 	};
 
 	const loanForm = () => (
