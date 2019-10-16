@@ -17,7 +17,7 @@ You will also see any lint errors in the console.
 Clone this repo, install dependencies and run the app
 
 ```
-git clone https://github.com/LiranGib/Loan-Calculator.git`
+git clone https://github.com/LiranGib/Loan-Calculator.git
 cd Loan-Calculator
 npm install
 npm start
