@@ -24,7 +24,7 @@ const LoanForm = () => {
 
 		setValues({
 			...values,
-			payment: paymentAmount,
+			payment: `$${paymentAmount.toLocaleString()}`,
 			loanTerm: term
 		});
 	};
@@ -63,24 +63,26 @@ const LoanForm = () => {
 	};
 
 	const loanForm = () => (
-		<form className='m-3' onSubmit={clickSubmit}>
+		<form onSubmit={clickSubmit}>
 			<div className='form-group'>
-				<label className='text-muted'>Start Date</label>
+				{/* <label className='text-muted'>Start Date</label> */}
 				<input
 					onChange={handleChange('startDate')}
 					type='date'
 					className='form-control'
+					placeholder='Start Date'
 					value={startDate}
 					required
 				/>
 			</div>
 
 			<div className='form-group'>
-				<label className='text-muted'>Loan Amount ($)</label>
+				{/* <label className='text-muted'>Loan Amount ($)</label> */}
 				<input
 					onChange={handleChange('loan')}
 					type='number'
 					className='form-control'
+					placeholder='Loan Amount'
 					min='0'
 					value={loan}
 					required
@@ -88,22 +90,24 @@ const LoanForm = () => {
 			</div>
 
 			<div className='form-group'>
-				<label className='text-muted'>Installment Amount</label>
+				{/* <label className='text-muted'>Installment Amount</label> */}
 				<input
 					onChange={handleChange('installmentAmount')}
 					type='number'
 					className='form-control'
+					placeholder='Installment Amount'
 					value={installmentAmount}
 					required
 				/>
 			</div>
 
 			<div className='form-group'>
-				<label className='text-muted'>Interest Rate (%)</label>
+				{/* <label className='text-muted'>Interest Rate (%)</label> */}
 				<input
 					onChange={handleChange('interestRate')}
 					type='number'
 					className='form-control'
+					placeholder='Interest Rate (%)'
 					value={interestRate}
 					min='0'
 					max='20'
@@ -113,9 +117,9 @@ const LoanForm = () => {
 			</div>
 
 			<div className='form-group'>
-				<label className='text-muted'>Installment Interval</label>
+				{/* <label className='text-muted'>Installment Interval</label> */}
 				<select onChange={handleChange('installmentInterval')} className='form-control' required>
-					<option>Please select</option>
+					<option>Select Installment Interval</option>
 					<option value='days'>Days</option>
 					<option value='months'>Months</option>
 					<option value='years'>Years</option>
@@ -123,19 +127,28 @@ const LoanForm = () => {
 			</div>
 
 			<button className='btn btn-outline-primary'>Calculate</button>
+
+			{installmentInterval === 'days' ? (
+				<p className='bg-primary text-white mt-3 p-1 rounded'>
+					Daily Payment <span className='pl-2 text-warning font-weight-bold'>{payment}</span>
+				</p>
+			) : (
+				<p className='bg-primary text-white mt-3 p-1 rounded'>
+					Monthly Payment <span className='pl-2 text-warning font-weight-bold'>{payment}</span>
+				</p>
+			)}
 		</form>
 	);
 
 	return (
-		<>
-			{loanForm()}
-			{installmentInterval === 'days' ? (
-				<h5 className='bg-primary text-white m-3 mt-5 p-2'>Daily Payment {payment}</h5>
-			) : (
-				<h5 className='bg-primary text-white m-3 mt-5 p-2'>Monthly Payment {payment} </h5>
-			)}
-			<PaymentsSchedule values={values} />
-		</>
+		<div className='container'>
+			<div className='row'>
+				<div className='col-md-4'>{loanForm()}</div>
+				<div className='col-md-8'>
+					<PaymentsSchedule values={values} />
+				</div>
+			</div>
+		</div>
 	);
 };
 

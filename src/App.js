@@ -5,8 +5,8 @@ import './App.css';
 function App() {
 	return (
 		<div>
-			<h3 className='mt-3 ml-3'>Loan Calculator</h3>
-			<Loan />
+			<h3 className='text-center m-3 pb-4'>Loan Calculator</h3>
+			<Loan className='col-6' />
 		</div>
 	);
 }

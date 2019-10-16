@@ -6,7 +6,7 @@ export default function PaymentsSchedule({ values }) {
 	const { startDate, installmentInterval, payment, loanTerm } = values;
 
 	const table = scheduleArray => (
-		<table className='table m-3'>
+		<table className='table table-striped'>
 			<thead>
 				<tr>
 					<th scope='col'>#</th>
@@ -81,9 +81,10 @@ export default function PaymentsSchedule({ values }) {
 
 		return (
 			<>
-				<h5 className='m-3 bg-success text-white p-2'>
-					Estimated payoff date: {scheduleArray[scheduleArray.length - 1]}
-				</h5>
+				<p className='bg-success text-white p-1 rounded'>
+					Estimated payoff date:{' '}
+					<span className='pl-2 text-warning font-weight-bold'>{scheduleArray[scheduleArray.length - 1]}</span>
+				</p>
 				{table(scheduleArray)}
 			</>
 		);
