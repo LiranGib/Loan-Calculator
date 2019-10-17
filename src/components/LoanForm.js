@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PaymentsSchedule from './PaymentsSchedule';
+import AmortizationSchedule from './AmortizationSchedule';
 
 const LoanForm = () => {
 	const [values, setValues] = useState({
@@ -9,7 +9,8 @@ const LoanForm = () => {
 		interestRate: '',
 		installmentInterval: '',
 		payment: '',
-		loanTerm: ''
+		loanTerm: '',
+		calcInterest: ''
 	});
 
 	const { startDate, loan, installmentAmount, interestRate, installmentInterval, payment } = values;
@@ -17,15 +18,16 @@ const LoanForm = () => {
 	//Calculating the monthly/daily payment
 	const installmentPayment = (term, interest) => {
 		// breaking annual interest into monthly interest
-		interest = interest || interestRate / 1200;
+		interest = +(Math.round((interest || interestRate / 1200) + 'e+7') + 'e-7');
 		let paymentAmount = (loan * interest) / (1 - Math.pow(1 / (1 + interest), term));
 		//Round to at most 2 decimal places
 		paymentAmount = +(Math.round(paymentAmount + 'e+2') + 'e-2');
 
 		setValues({
 			...values,
-			payment: `$${paymentAmount.toLocaleString()}`,
-			loanTerm: term
+			payment: paymentAmount,
+			loanTerm: term,
+			calcInterest: interest
 		});
 	};
 
@@ -65,7 +67,6 @@ const LoanForm = () => {
 	const loanForm = () => (
 		<form onSubmit={clickSubmit}>
 			<div className='form-group'>
-				{/* <label className='text-muted'>Start Date</label> */}
 				<input
 					onChange={handleChange('startDate')}
 					type='date'
@@ -77,20 +78,23 @@ const LoanForm = () => {
 			</div>
 
 			<div className='form-group'>
-				{/* <label className='text-muted'>Loan Amount ($)</label> */}
-				<input
-					onChange={handleChange('loan')}
-					type='number'
-					className='form-control'
-					placeholder='Loan Amount'
-					min='0'
-					value={loan}
-					required
-				/>
+				<div className='input-group'>
+					<div className='input-group-prepend'>
+						<div className='input-group-text'>$</div>
+					</div>
+					<input
+						onChange={handleChange('loan')}
+						type='number'
+						className='form-control'
+						placeholder='Loan Amount'
+						min='0'
+						value={loan}
+						required
+					/>
+				</div>
 			</div>
 
 			<div className='form-group'>
-				{/* <label className='text-muted'>Installment Amount</label> */}
 				<input
 					onChange={handleChange('installmentAmount')}
 					type='number'
@@ -102,24 +106,27 @@ const LoanForm = () => {
 			</div>
 
 			<div className='form-group'>
-				{/* <label className='text-muted'>Interest Rate (%)</label> */}
-				<input
-					onChange={handleChange('interestRate')}
-					type='number'
-					className='form-control'
-					placeholder='Interest Rate (%)'
-					value={interestRate}
-					min='0'
-					max='20'
-					step='0.1'
-					required
-				/>
+				<div className='input-group'>
+					<div className='input-group-prepend'>
+						<div className='input-group-text'>%</div>
+					</div>
+					<input
+						onChange={handleChange('interestRate')}
+						type='number'
+						className='form-control'
+						placeholder='Interest Rate'
+						value={interestRate}
+						min='0'
+						max='20'
+						step='0.1'
+						required
+					/>
+				</div>
 			</div>
 
 			<div className='form-group'>
-				{/* <label className='text-muted'>Installment Interval</label> */}
-				<select onChange={handleChange('installmentInterval')} className='form-control' required>
-					<option>Select Installment Interval</option>
+				<select onChange={handleChange('installmentInterval')} className='form-control text-muted' required>
+					<option defaultValue>Choose Interval</option>
 					<option value='days'>Days</option>
 					<option value='months'>Months</option>
 					<option value='years'>Years</option>
@@ -144,8 +151,8 @@ const LoanForm = () => {
 		<div className='container'>
 			<div className='row'>
 				<div className='col-md-4'>{loanForm()}</div>
-				<div className='col-md-8'>
-					<PaymentsSchedule values={values} />
+				<div className='col-md-8 table-sm'>
+					<AmortizationSchedule values={values} />
 				</div>
 			</div>
 		</div>
