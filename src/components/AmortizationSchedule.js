@@ -18,27 +18,15 @@ export default function AmortizationSchedule({ values }) {
 					Estimated payoff date:{' '}
 					<span className='pl-2 text-warning font-weight-bold'>{scheduleArray[scheduleArray.length - 1]}</span>
 				</p>
-				<table className='table table-striped'>
+				<table className='table table-striped small'>
 					<thead>
 						<tr>
-							<th scope='col'>
-								<small>Pmt #</small>
-							</th>
-							<th scope='col'>
-								<small>Date</small>
-							</th>
-							<th scope='col'>
-								<small>Payment Amount</small>
-							</th>
-							<th scope='col'>
-								<small>Principal Amount</small>
-							</th>
-							<th scope='col'>
-								<small>Interest Amount</small>
-							</th>
-							<th scope='col'>
-								<small>Balance</small>
-							</th>
+							<th scope='col'>Pmt #</th>
+							<th scope='col'>Date</th>
+							<th scope='col'>Payment Amount</th>
+							<th scope='col'>Principal Amount</th>
+							<th scope='col'>Interest Amount</th>
+							<th scope='col'>Balance</th>
 						</tr>
 					</thead>
 					<tbody>
