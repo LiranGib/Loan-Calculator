@@ -50,18 +50,18 @@ const LoanForm = () => {
 
 	const clickSubmit = event => {
 		event.preventDefault();
-		calculatePayments();
+		let today = new Date();
+		let userDate = new Date(startDate);
+		if (userDate < today) {
+			window.alert('Date can not be in the past!');
+		} else {
+			calculatePayments();
+		}
 	};
 
 	const handleChange = name => event => {
-		let today = new Date();
-		let userDate = new Date(event.target.value);
-		if (name === 'startDate' && userDate < today) {
-			window.alert('Date can not be in the past!');
-		} else {
-			const value = event.target.value;
-			setValues({ ...values, [name]: value });
-		}
+		const value = event.target.value;
+		setValues({ ...values, [name]: value });
 	};
 
 	const loanForm = () => (
@@ -137,11 +137,13 @@ const LoanForm = () => {
 
 			{installmentInterval === 'days' ? (
 				<p className='bg-primary text-white mt-3 p-1 rounded'>
-					Daily Payment <span className='pl-2 text-warning font-weight-bold'>{payment}</span>
+					Daily Payment{' '}
+					<span className='pl-2 text-warning font-weight-bold'>{`$${payment.toLocaleString()}`}</span>
 				</p>
 			) : (
 				<p className='bg-primary text-white mt-3 p-1 rounded'>
-					Monthly Payment <span className='pl-2 text-warning font-weight-bold'>{payment}</span>
+					Monthly Payment{' '}
+					<span className='pl-2 text-warning font-weight-bold'>{`$${payment.toLocaleString()}`}</span>
 				</p>
 			)}
 		</form>
